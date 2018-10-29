@@ -72,8 +72,21 @@ public class SumYTD {
                 //System.out.println(accounting_line_string);
                 // Split accounting line so we can extract the parts that makes up a unique line.
                 parts = accounting_line_string.split(";");
-                ytd_primary_key = parts[0] + ";" + parts[8] + ";" + parts[12] + ";" + parts[19] + ";" + parts[23] + ";" + parts[25] + ";" + parts[21];
-                ytd_secondary_key = parts[1];
+                // Primary key may differ depending on the number of fields in CSV-file. The reason is the file
+                // comes in two versions. One with the complete records (28 parts) and additions (17 parts).
+                //System.out.println(parts.length);
+                if (parts.length == 17) {
+                    ytd_primary_key = parts[0] + ";" + parts[8] + ";" + parts[12] + ";" + parts[14] + ";" + parts[10];
+                    ytd_secondary_key = parts[1];
+                    // Add empty values so it corresponds to the complete CSV when it contains more fields.
+                    accounting_line_string =  parts[0]  + ";" + parts[1]  + ";" + parts[2]  + ";" + parts[3]  + ";;;;;;;;;;;;";
+                    accounting_line_string += parts[4]  + ";" + parts[5]  + ";" + parts[6]  + ";" + parts[7]  + ";" + parts[8] + ";";
+                    accounting_line_string += parts[9]  + ";" + parts[10] + ";" + parts[11] + ";" + parts[12] + ";";
+                    accounting_line_string += parts[13] + ";" + parts[14] + ";" + parts[15] + ";" + parts[16];
+                } else {
+                    ytd_primary_key = parts[0] + ";" + parts[8] + ";" + parts[12] + ";" + parts[19] + ";" + parts[23] + ";" + parts[25] + ";" + parts[21];
+                    ytd_secondary_key = parts[1];
+                }
                 //System.out.println(ytd_primary_key);
                 AccountingLine accountingLine = new AccountingLine(accounting_line_string, (BigDecimal) mentry.getValue());
                 ytd_sum_map.put(ytd_primary_key, ytd_secondary_key, accountingLine);
